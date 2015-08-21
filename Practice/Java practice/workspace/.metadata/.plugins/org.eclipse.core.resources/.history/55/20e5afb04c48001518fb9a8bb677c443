@@ -1,0 +1,10 @@
+package com.codlex.algorithms.graph;
+
+public class GraphClient extends Client {
+
+	public static void main(String[] args) {
+		while (true) {
+			
+		}
+	}
+}
