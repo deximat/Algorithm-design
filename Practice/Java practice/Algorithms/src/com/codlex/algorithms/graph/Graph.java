@@ -33,6 +33,7 @@ public class Graph {
 		
 		// add vertex2 -> vertex1
 		this.adjecencyList.get(vertex2).add(vertex1);
+	
 		
 		this.edgesCount++;
 	}
