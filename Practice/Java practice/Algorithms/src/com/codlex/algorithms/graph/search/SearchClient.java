@@ -40,8 +40,7 @@ public class SearchClient extends Client<Search> {
 	}
 
 	@Override
-	protected Search createObject() {
-		
+	protected Search createObject() {	
 		this.graph = new GraphList(100);
 		return new DepthFirstSearch(this.graph, 0);
 	}
