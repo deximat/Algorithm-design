@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public abstract class Client<TypeToTest> {
 	
-	protected final TypeToTest object;
+	protected TypeToTest object;
 	private final Scanner in = new Scanner(System.in);
 	
 	public Client() {
@@ -17,17 +17,18 @@ public abstract class Client<TypeToTest> {
 			try {
 				final Command command = Command.produce(this.in.nextLine());
 				if (command != null) {
-					System.out.println(process(command));
+					System.out.println(process(this.object, command));
 				} else {
 					System.out.println("Bad command, try again.");
 				}
 			} catch (Exception e) {
 				System.out.println("Bad command, try again.");
+				e.printStackTrace();
 			}
 		}
 	}
 	
-	protected abstract String process(final Command command);
+	public abstract String process(final TypeToTest object, final Command command);
 
 	protected abstract TypeToTest createObject();
 }

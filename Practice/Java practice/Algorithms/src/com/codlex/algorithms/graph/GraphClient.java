@@ -12,20 +12,20 @@ public class GraphClient extends Client<Graph> {
 	}
 
 	@Override
-	protected String process(Command command) {
+	public String process(Graph graph, Command command) {
 		switch (command.getKey()) {
 		case "add":
 			int vertex1 = Integer.parseInt(command.getParam(0));
 			int vertex2 = Integer.parseInt(command.getParam(1));
-			this.object.addEdge(vertex1, vertex2);
+			graph.addEdge(vertex1, vertex2);
 			return "Added {" + vertex1 + ", " + vertex2 + "}";
 		case "edges":
-			return Integer.toString(this.object.getEdgesCount());
+			return Integer.toString(graph.getEdgesCount());
 		case "vertices":
-			return Integer.toString(this.object.getVerticesCount());
+			return Integer.toString(graph.getVerticesCount());
 		case "adj":
 			int vertex = Integer.parseInt(command.getParam(0));
-			return IterableUtils.toString(this.object.adjecentTo(vertex));
+			return IterableUtils.toString(graph.adjecentTo(vertex));
 		default:
 			return "Invalid command";
 		}
@@ -35,4 +35,5 @@ public class GraphClient extends Client<Graph> {
 	protected Graph createObject() {
 		return new GraphMatrix(15);
 	}
+
 }
