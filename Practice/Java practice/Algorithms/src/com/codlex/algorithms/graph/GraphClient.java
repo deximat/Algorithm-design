@@ -2,6 +2,8 @@ package com.codlex.algorithms.graph;
 
 import com.codlex.algorithms.client.Client;
 import com.codlex.algorithms.client.Command;
+import com.codlex.algorithms.graph.implementation.GraphList;
+import com.codlex.algorithms.graph.implementation.GraphMatrix;
 import com.codlex.util.IterableUtils;
 
 public class GraphClient extends Client<Graph> {
@@ -25,7 +27,7 @@ public class GraphClient extends Client<Graph> {
 		case "adj":
 			int vertex = Integer.parseInt(command.getParam(0));
 			return IterableUtils.toString(this.object
-					.adjecentVerticesTo(vertex));
+					.adjecentTo(vertex));
 		default:
 			return "Invalid command";
 		}
@@ -33,6 +35,6 @@ public class GraphClient extends Client<Graph> {
 
 	@Override
 	protected Graph createObject() {
-		return new Graph(15);
+		return new GraphMatrix(15);
 	}
 }
