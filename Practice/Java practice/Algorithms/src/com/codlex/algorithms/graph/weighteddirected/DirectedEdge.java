@@ -2,7 +2,7 @@ package com.codlex.algorithms.graph.weighteddirected;
 
 import com.codlex.algorithms.graph.weighted.Edge;
 
-public class DirectedEdge {
+public class DirectedEdge implements Comparable<DirectedEdge> {
 
 	private final int from;
 	private final int to;
@@ -30,5 +30,10 @@ public class DirectedEdge {
 	public String toString() {
 		return Edge.class.getSimpleName() + "[" + this.from + " -> " + this.to
 				+ ": " + this.weight + "]";
+	}
+
+	@Override
+	public int compareTo(DirectedEdge that) {
+		return Double.compare(this.weight, that.weight);
 	}
 }
