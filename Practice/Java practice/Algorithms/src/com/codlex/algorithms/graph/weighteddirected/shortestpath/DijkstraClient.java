@@ -5,17 +5,17 @@ import com.codlex.algorithms.client.Command;
 import com.codlex.algorithms.graph.weighteddirected.EdgeWeightedDigraph;
 import com.codlex.algorithms.graph.weighteddirected.EdgeWeightedDigraphClient;
 
-public class DijkstraClient extends Client<DijkstraShortestPath> {
+public class DijkstraClient extends Client<NonDijkstraShortestPath> {
 
 	private EdgeWeightedDigraph graph;
 	private final EdgeWeightedDigraphClient graphClient = new EdgeWeightedDigraphClient();
 
 	private void doMst(int source) {
-		this.object = new DijkstraShortestPath(this.graph, source);
+		this.object = new NonDijkstraShortestPath(this.graph, source);
 	}
 
 	@Override
-	public String process(DijkstraShortestPath shortestPath, Command command) {
+	public String process(NonDijkstraShortestPath shortestPath, Command command) {
 		switch (command.getKey()) {
 		case "dijkstra":
 			doMst(Integer.parseInt(command.getParam(0)));
@@ -32,9 +32,9 @@ public class DijkstraClient extends Client<DijkstraShortestPath> {
 	}
 
 	@Override
-	protected DijkstraShortestPath createObject() {
+	protected NonDijkstraShortestPath createObject() {
 		this.graph = new EdgeWeightedDigraph(15);
-		return new DijkstraShortestPath(this.graph, 0);
+		return new NonDijkstraShortestPath(this.graph, 0);
 	}
 
 	public static void main(String[] args) {
