@@ -33,7 +33,7 @@ public class QuickFind {
 	}
 	
 	public static void main(String[] args) {
-		UnionFind union = new UnionFind(10);
+		QuickFind union = new QuickFind(10);
 		Scanner in = new Scanner(System.in);
 		while (true) {
 			String command = in.next();
