@@ -13,6 +13,7 @@ public class WeightedUnionFind {
 			this.id = id;
 			this.size = 1;
 			this.parent = this;
+			String s;
 		}
 		
 		private boolean isRoot() {
