@@ -1,0 +1,123 @@
+import java.util.*;
+import java.lang.*;
+
+class Graph {
+
+	private int v;
+	private final List<List<Integer>> neighbours;
+	
+	public Graph(int v) {
+		this.v = v;
+		this.neighbours = new ArrayList<List<Integer>>();
+		for (int i = 0; i < v; i++) {
+			this.neighbours.add(new ArrayList<Integer>());
+		}
+	}
+	
+	public List<Integer> neighbours(int v) {
+		return this.neighbours.get(v - 1);
+	}
+	
+	public void addEdge(int from, int to) {
+		neighbours(from).add(to);
+		neighbours(to).add(from);
+	}
+	
+	public int getV() {
+		return v;
+	}
+}
+
+
+class ArticulationPoints {
+	private static final int UNVISITED = 0; 
+	private static final int EXPLORED = 1; 
+	private static final int VISITED = 2;
+	
+	private int count;
+	private final int[] state;
+	private boolean[] isArticulation;
+	private int rootNumberOfChildren;
+	private final Graph g;
+	private int currentDfsOrder;
+	private int[] dfsOrder;
+	private int[] dfsLow;
+	
+	public ArticulationPoints(Graph g) {
+		this.g = g;
+		this.state = new int[g.getV() + 1];
+		this.isArticulation = new boolean[g.getV() + 1];
+		this.dfsOrder = new int[g.getV() + 1];
+		this.dfsLow = new int[g.getV() + 1];
+		
+		dfs(0, 1);
+		
+		// special case
+		this.isArticulation[1] = rootNumberOfChildren > 1;
+		
+		int count = 0;
+		for (int i = 1; i <= g.getV(); i++) {
+			if (this.isArticulation[i]) {
+				count++;
+			}
+		}
+		this.count = count;
+	}
+	
+	public int getCount() {
+		return count;
+	}
+	
+	private void dfs(int from, int v) {
+		this.state[v] = EXPLORED;
+		this.dfsOrder[v] = this.dfsLow[v] = currentDfsOrder++;
+		
+		for (Integer neighbour : this.g.neighbours(v)) {
+			if (this.state[neighbour] == UNVISITED) {
+				if (v == 1) { // is root
+					rootNumberOfChildren++;
+				}
+				
+				dfs(v, neighbour);
+				
+				if (this.dfsOrder[v] <= this.dfsLow[neighbour]) {
+					this.isArticulation[v] = true;
+				}
+				
+				this.dfsLow[v] = Math.min(this.dfsLow[neighbour], this.dfsLow[v]);
+			} else if (from != neighbour) {
+				// back edge
+				this.dfsLow[v] = Math.min(this.dfsLow[v], this.dfsOrder[neighbour]);
+			}
+		}
+		this.state[v] = VISITED;
+	}
+}
+
+class Main {
+
+	public static void main(String[] args) {
+		
+		Scanner in = new Scanner(System.in);
+		
+		
+		int v = in.nextInt();
+		
+		while (v != 0) { // test case loop
+			Graph g = new Graph(v);
+		
+			int vertex = in.nextInt();
+			while (vertex != 0) { // neighbours loop
+				
+				String[] neighbours = in.nextLine().substring(1).split(" ");
+				for (String neighbour : neighbours) {
+					g.addEdge(vertex, Integer.parseInt(neighbour));
+				}
+				vertex = in.nextInt();
+			}
+			System.out.println(new ArticulationPoints(g).getCount());
+			v = in.nextInt();
+		}
+	}
+
+}
