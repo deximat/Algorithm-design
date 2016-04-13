@@ -1,0 +1,167 @@
+import java.lang.*;
+import java.util.*;
+
+
+class SCC {
+	private final static int UNVISITED = 0;
+	private final Stack<Integer> nodes = new Stack<>();
+	private final Graph graph;
+	private int[] dfsOrder;
+	private int nextDfsOrder = 1;
+	private int[] dfsMinOrder;
+	
+	private boolean[] visited;
+	private Collection<Collection<Integer>> components = new ArrayList<Collection<Integer>>();
+	
+	public SCC(Graph graph) {
+		this.graph = graph;
+		this.dfsOrder = new int[graph.getN()];
+		this.dfsMinOrder = new int[graph.getN()];
+		this.visited = new boolean[graph.getN()];
+		
+		for (int i = 0; i < this.graph.getN(); i++) {
+			if (this.dfsOrder[i] == UNVISITED) {
+				dfs(i);
+			}
+		}
+		for (int i = 0; i < this.graph.getN(); i++) {
+			// System.out.println(this.graph.getName(i) + ":min/order" + this.dfsMinOrder[i] + "/" + this.dfsOrder[i]);
+		}
+
+	}
+	
+	private void dfs(int v) {
+		this.dfsOrder[v] = this.dfsMinOrder[v] = nextDfsOrder++;
+		nodes.push(v);
+		this.visited[v] = true;
+		int min = this.dfsMinOrder[v];
+		
+		for (Integer neighbour : this.graph.neighbours(v)) {
+			if (!this.visited[neighbour]) {
+				dfs(neighbour);
+			} 
+			min = Math.min(min, 
+										this.dfsMinOrder[neighbour]);
+		}
+		if (min < this.dfsMinOrder[v]) {
+			this.dfsMinOrder[v] = min;
+			return;
+		}
+		
+		int currentNode; 
+		Collection component = new ArrayList<Integer>();
+
+		do {
+			currentNode = this.nodes.pop();
+			component.add(currentNode);
+			this.dfsMinOrder[currentNode] = this.graph.getN();
+		} while (currentNode != v);
+		
+		this.components.add(component);
+
+	}
+	
+	public Collection<Collection<Integer>> getComponents() {
+		return this.components;
+	}
+}	
+
+class Graph {
+
+	private final int n;
+	private final Map<String, Integer> nameToSlot = new HashMap<>();
+	private final Map<Integer, String> slotToName = new HashMap<>();
+	private int freeSlot;
+	private final List<List<Integer>> neighbours;
+	
+	public Graph(int n) {
+		this.n = n;
+		this.neighbours = new ArrayList<List<Integer>>();
+		for (int i = 0; i < n; i++) {
+			this.neighbours.add(new ArrayList<Integer>());
+		}
+	}
+	
+	private int getSlot(String name) {
+		Integer slot = this.nameToSlot.get(name);
+		if (slot == null) {
+			slot = this.freeSlot++;
+			this.nameToSlot.put(name, slot);
+			this.slotToName.put(slot, name);
+		}
+		
+		return slot;
+	}
+	
+	public void addEdge(String from, String to) {
+		addEdge(getSlot(from), getSlot(to));
+	}
+	
+	private void addEdge(int from, int to) {
+		this.neighbours.get(from).add(to);
+	}
+	
+	public int getN() {
+		return this.n;
+	}
+	
+	public List<Integer> neighbours(int v) {
+		return this.neighbours.get(v);
+	}
+	
+	public String getName(int v) {
+		return this.slotToName.get(v);
+	}
+}
+
+class Main {
+
+	public static void main(String[] args) {
+		Scanner in = new Scanner(System.in);
+		
+		int n = in.nextInt();
+		int m = in.nextInt();
+		int testCase = 1;
+		while (n != 0 && m != 0) {
+			System.out.println("Calling circles for data set " + testCase + ":");
+
+
+			Graph g = new Graph(n);
+			
+			for (int i = 0; i < m; i++) {
+				String from = in.next();
+				String to = in.next();
+				
+				g.addEdge(from, to);
+			}
+			
+			SCC scc = new SCC(g);
+			
+			Collection<Collection<Integer>> components = scc.getComponents();
+			
+			int componentNumber = 1;
+			for (Collection<Integer> component : components) {
+				
+				int personNumber = 1;
+				for (Integer person : component) {
+					System.out.print(g.getName(person));
+					if (personNumber != component.size()) {
+						System.out.print(", ");
+					}
+					personNumber++;
+				}
+				System.out.println();
+				
+				
+				componentNumber++;
+			}
+			n = in.nextInt();
+			m = in.nextInt();
+			
+			if (n != 0 && m != 0) {
+				System.out.println();
+			}
+			testCase++;
+		}
+	}
+}
